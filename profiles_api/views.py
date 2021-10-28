@@ -2,9 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
 
 from profiles_api import serializers
 from profiles_api import models
+from profiles_api import permissions
 
 
 
@@ -76,6 +78,7 @@ class HelloViewSet(viewsets.ViewSet):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
             )
+
     def retrieve(self,request,pk=None):
         """Handle getting an object by its ID"""
         return Response({'http_method':'GET'})
@@ -96,3 +99,5 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     "Handle creating and updating profiles"
     serializer_class=serializers.UserProfileSerializer
     queryset=models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permissions_classes = (permissions.UpdateOwnProfile,)
